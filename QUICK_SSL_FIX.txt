@@ -1,0 +1,85 @@
+================================================================================
+🔐 QUICK FIX - SSL Handshake Error
+================================================================================
+
+PROBLEM: SSL handshake failed with MongoDB Atlas
+
+CAUSE: Python 3.13 has stricter SSL/TLS requirements
+
+================================================================================
+⚡ FASTEST FIX (30 seconds)
+================================================================================
+
+Open your backend/.env file and UPDATE your MONGODB_URI line:
+
+OLD (BROKEN):
+MONGODB_URI=mongodb+srv://megha:Megha2711%24@cluster0.nf1dcp2.mongodb.net/?retryWrites=true&w=majority&authSource=admin
+
+NEW (FIXED):
+MONGODB_URI=mongodb+srv://megha:Megha2711%24@cluster0.nf1dcp2.mongodb.net/?retryWrites=true&w=majority&authSource=admin&tls=true&tlsAllowInvalidCertificates=true
+
+WHAT CHANGED:
+Added: &tls=true&tlsAllowInvalidCertificates=true
+
+⚠️ This is for development only! Remove tlsAllowInvalidCertificates in production.
+
+================================================================================
+TEST THE FIX
+================================================================================
+
+cd backend
+venv\Scripts\activate
+python test_mongodb.py
+
+EXPECTED OUTPUT:
+✅ Connected to MongoDB!
+✅ Write successful!
+🎉 ALL TESTS PASSED!
+
+================================================================================
+THEN START BACKEND
+================================================================================
+
+python run.py
+
+SHOULD SEE:
+✓ MongoDB indexes created successfully
+ * Running on http://127.0.0.1:5000
+
+NO MORE SSL ERRORS! ✅
+
+================================================================================
+IF STILL NOT WORKING
+================================================================================
+
+SOLUTION 2: Upgrade PyMongo
+
+pip install --upgrade pymongo certifi
+python run.py
+
+SOLUTION 3: Use Standard Connection (not SRV)
+
+Go to MongoDB Atlas → Connect → "Connect your application"
+Select "Standard connection string" instead of SRV
+Copy that string to your .env file
+
+SOLUTION 4: Use Python 3.11 instead of 3.13
+
+Python 3.13 has SSL issues. Downgrade to Python 3.11:
+1. Install Python 3.11 from python.org
+2. Delete old venv: rmdir /s venv
+3. Create new: py -3.11 -m venv venv
+4. Install deps: pip install -r requirements.txt
+
+================================================================================
+FULL DOCUMENTATION
+================================================================================
+
+Read SSL_FIX.md for complete troubleshooting guide with all solutions.
+
+================================================================================
+
+🎯 MOST LIKELY: Just add &tls=true&tlsAllowInvalidCertificates=true to your 
+connection string and you're done!
+
+================================================================================

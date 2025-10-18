@@ -1,0 +1,54 @@
+# Core Flask Framework
+Flask==3.0.0
+Flask-Cors==4.0.0
+Flask-SocketIO==5.3.5
+python-socketio==5.10.0
+
+# Database
+pymongo==4.6.3
+certifi==2024.2.2
+
+# Authentication & Security
+PyJWT==2.8.0
+bcrypt==4.1.2
+
+# Environment & Configuration
+python-dotenv==1.0.0
+
+# Data Validation & Serialization
+marshmallow==3.20.1
+
+# Payment Gateway
+razorpay==1.4.1
+
+# Production Server
+gunicorn==21.2.0
+
+# Optional Dependencies (currently disabled but may be needed for future features)
+# Uncomment these if you plan to enable analytics or advanced features:
+
+# Data Analysis & Reporting (currently disabled in app/__init__.py)
+# pandas==2.0.3
+# numpy==1.25.2
+# openpyxl==3.1.2
+# reportlab==4.0.7
+# Pillow==9.5.0
+
+# Background Job Scheduling (currently not used but may be needed for assignment timers)
+# APScheduler==3.10.4
+
+# Geospatial Operations (currently not used but may be needed for location features)
+# geopy==2.4.1
+
+# Caching & Session Storage (currently not used but may be needed for scaling)
+# redis==5.0.1
+
+# Additional Production Dependencies
+setuptools>=65.0.0
+wheel>=0.38.0
+
+# Development Dependencies (uncomment for development)
+# pytest>=7.0.0
+# pytest-flask>=1.2.0
+# flake8>=5.0.0
+# black>=22.0.0

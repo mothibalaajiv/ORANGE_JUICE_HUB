@@ -1,0 +1,102 @@
+================================================================================
+🐍 PYTHON 3.11 SETUP - QUICK COMMANDS
+================================================================================
+
+PROBLEM: Python 3.13 cannot connect to MongoDB Atlas (SSL error)
+SOLUTION: Use Python 3.11 (10-minute setup)
+
+================================================================================
+STEP 1: DOWNLOAD PYTHON 3.11
+================================================================================
+
+Link: https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe
+
+OR go to python.org → Downloads → Python 3.11.9
+
+Install with "Add to PATH" CHECKED ✓
+
+================================================================================
+STEP 2: DELETE OLD VIRTUAL ENVIRONMENT
+================================================================================
+
+cd D:\ORANGE_JUICE_HUB\backend
+rmdir /s venv
+
+Press Y to confirm
+
+================================================================================
+STEP 3: CREATE NEW VENV WITH PYTHON 3.11
+================================================================================
+
+py -3.11 -m venv venv
+venv\Scripts\activate
+
+Verify version:
+python --version
+(Should show: Python 3.11.9)
+
+================================================================================
+STEP 4: INSTALL DEPENDENCIES
+================================================================================
+
+pip install --upgrade pip
+pip install -r requirements.txt
+
+================================================================================
+STEP 5: TEST MONGODB
+================================================================================
+
+python test_mongodb.py
+
+SHOULD SEE:
+✅ Connected to MongoDB!
+✅ Write successful!
+🎉 ALL TESTS PASSED!
+
+NO MORE SSL ERRORS! ✓
+
+================================================================================
+STEP 6: CREATE ADMIN
+================================================================================
+
+python create_admin.py
+
+Credentials:
+Email: admin@tangytown.com
+Password: Admin@123
+
+================================================================================
+STEP 7: START BACKEND
+================================================================================
+
+python run.py
+
+SHOULD SEE:
+✓ MongoDB indexes created successfully
+ * Running on http://127.0.0.1:5000
+
+================================================================================
+YOUR .env FILE (SIMPLE VERSION FOR PYTHON 3.11)
+================================================================================
+
+MONGODB_URI=mongodb+srv://megha:megha2711@cluster0.nf1dcp2.mongodb.net/?retryWrites=true&w=majority&authSource=admin
+DB_NAME=tangy_town
+JWT_SECRET_KEY=tangy-town-super-secret-jwt-key-change-this-in-production-2024
+JWT_REFRESH_SECRET_KEY=tangy-town-refresh-secret-key-also-change-this-2024
+RAZORPAY_KEY_ID=rzp_test_your_key_id
+RAZORPAY_KEY_SECRET=your_razorpay_secret
+FRONTEND_URL=http://localhost:3000
+FLASK_ENV=development
+FLASK_DEBUG=True
+PORT=5000
+
+Note: With Python 3.11, you DON'T need tlsAllowInvalidCertificates!
+
+================================================================================
+TOTAL TIME: 10 MINUTES
+RESULT: MONGODB WORKS PERFECTLY ✓
+================================================================================
+
+Read PYTHON_3.11_SETUP.md for detailed step-by-step guide.
+
+================================================================================
