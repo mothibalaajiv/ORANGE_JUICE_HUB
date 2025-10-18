@@ -29,7 +29,7 @@ def signup():
             return jsonify({'error': 'Invalid role'}), 400
         
         db = get_db()
-        if not db:
+        if db is None:
             return jsonify({'error': 'Database connection failed'}), 500
         
         # Check if email already exists
@@ -105,7 +105,7 @@ def login():
             return jsonify({'error': 'Email and password are required'}), 400
         
         db = get_db()
-        if not db:
+        if db is None:
             return jsonify({'error': 'Database connection failed'}), 500
         
         # Find user

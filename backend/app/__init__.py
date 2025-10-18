@@ -90,6 +90,14 @@ def create_app(config_name='default'):
     def health():
         try:
             # Test database connection
+            if db is None:
+                return jsonify({
+                    'status': 'unhealthy', 
+                    'service': 'Tangy Town API',
+                    'database': 'disconnected',
+                    'error': 'Database not initialized'
+                }), 500
+            
             db.admin.command('ping')
             return jsonify({
                 'status': 'healthy', 

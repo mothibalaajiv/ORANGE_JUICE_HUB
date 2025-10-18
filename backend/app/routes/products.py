@@ -12,7 +12,7 @@ def get_products():
     """Get all products with filters"""
     try:
         db = get_db()
-        if not db:
+        if db is None:
             return jsonify({'error': 'Database connection failed'}), 500
         
         # Build query from query params
