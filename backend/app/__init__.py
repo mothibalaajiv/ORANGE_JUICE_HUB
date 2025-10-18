@@ -25,9 +25,15 @@ def create_app(config_name='default'):
     app.config.from_object(config[config_name])
     
     # Enable CORS
+    allowed_origins = [
+        app.config['FRONTEND_URL'],
+        'http://localhost:3000',
+        'https://orange-juice-lv4abpyqs-mothi-balaaji-vs-projects.vercel.app'
+    ]
+    
     CORS(app, resources={
         r"/api/*": {
-            "origins": app.config['FRONTEND_URL'],
+            "origins": allowed_origins,
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             "allow_headers": ["Content-Type", "Authorization"]
         }
@@ -82,7 +88,21 @@ def create_app(config_name='default'):
     # Health check
     @app.route('/api/health')
     def health():
-        return jsonify({'status': 'healthy', 'service': 'Tangy Town API'}), 200
+        try:
+            # Test database connection
+            db.admin.command('ping')
+            return jsonify({
+                'status': 'healthy', 
+                'service': 'Tangy Town API',
+                'database': 'connected'
+            }), 200
+        except Exception as e:
+            return jsonify({
+                'status': 'unhealthy', 
+                'service': 'Tangy Town API',
+                'database': 'disconnected',
+                'error': str(e)
+            }), 500
     
     # Serve React app for all non-API routes
     @app.route('/', defaults={'path': ''})

@@ -15,6 +15,8 @@ def signup():
     """User registration"""
     try:
         data = request.get_json()
+        if not data:
+            return jsonify({'error': 'Request body is required'}), 400
         
         # Validate required fields
         required_fields = ['name', 'email', 'password', 'role']
@@ -27,6 +29,8 @@ def signup():
             return jsonify({'error': 'Invalid role'}), 400
         
         db = get_db()
+        if not db:
+            return jsonify({'error': 'Database connection failed'}), 500
         
         # Check if email already exists
         existing_user = db.users.find_one({'email': data['email'].lower()})
@@ -82,7 +86,10 @@ def signup():
         }), 201
     
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        print(f"Signup error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
 
 @auth_bp.route('/login', methods=['POST'])
@@ -90,12 +97,16 @@ def login():
     """User login"""
     try:
         data = request.get_json()
+        if not data:
+            return jsonify({'error': 'Request body is required'}), 400
         
         # Validate required fields
         if not data.get('email') or not data.get('password'):
             return jsonify({'error': 'Email and password are required'}), 400
         
         db = get_db()
+        if not db:
+            return jsonify({'error': 'Database connection failed'}), 500
         
         # Find user
         user = db.users.find_one({'email': data['email'].lower()})
@@ -124,7 +135,10 @@ def login():
         }), 200
     
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        print(f"Login error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
 
 @auth_bp.route('/refresh', methods=['POST'])
