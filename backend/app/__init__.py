@@ -28,7 +28,7 @@ def create_app(config_name='default'):
     allowed_origins = [
         app.config['FRONTEND_URL'],
         'http://localhost:3000',
-        'https://orange-juice-lv4abpyqs-mothi-balaaji-vs-projects.vercel.app'
+        'https://orange-juice-hub.vercel.app'
     ]
     
     CORS(app, resources={

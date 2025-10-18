@@ -21,7 +21,7 @@ class Config:
     GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY')
     
     # CORS
-    FRONTEND_URL = os.getenv('FRONTEND_URL', 'https://orange-juice-lv4abpyqs-mothi-balaaji-vs-projects.vercel.app')
+    FRONTEND_URL = os.getenv('FRONTEND_URL', 'https://orange-juice-hub.vercel.app')
     
     # Assignment settings
     PARTNER_ASSIGNMENT_TIMEOUT = 300  # 5 minutes in seconds
