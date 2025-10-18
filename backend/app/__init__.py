@@ -112,6 +112,21 @@ def create_app(config_name='default'):
                 'error': str(e)
             }), 500
     
+    # Debug endpoint
+    @app.route('/api/debug')
+    def debug():
+        try:
+            import os
+            return jsonify({
+                'environment': os.getenv('FLASK_ENV', 'development'),
+                'mongodb_uri_set': bool(os.getenv('MONGODB_URI')),
+                'frontend_url': app.config.get('FRONTEND_URL'),
+                'database_initialized': db is not None,
+                'collections': list(db.list_collection_names()) if db else []
+            }), 200
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    
     # Serve React app for all non-API routes
     @app.route('/', defaults={'path': ''})
     @app.route('/<path:path>')
