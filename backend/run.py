@@ -2,7 +2,7 @@
 Tangy Town - Flask Backend Application
 Main entry point
 """
-from flask import send_from_directory
+from flask import send_from_directory, jsonify
 from app import create_app, socketio
 import os
 
@@ -22,14 +22,24 @@ if __name__ == '__main__':
     print("=" * 60)
 
 
-@app.route("/", defaults={"path": ""})
-@app.route("/<path:path>")
-def serve(path):
-    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
-        return send_from_directory(app.static_folder, path)
-    else:
-        return send_from_directory(app.static_folder, "index.html")
-    
+    # Serve React app for all non-API routes
+    @app.route('/', defaults={'path': ''})
+    @app.route('/<path:path>')
+    def serve_react_app(path):
+        """Serve React app for all non-API routes"""
+        from flask import send_from_directory
+        import os
+        
+        # If path is an API route, let it be handled by blueprints
+        if path.startswith('api/'):
+            return jsonify({'error': 'API endpoint not found'}), 404
+        
+        # If path exists as a static file, serve it
+        if path and os.path.exists(os.path.join(app.static_folder, path)):
+            return send_from_directory(app.static_folder, path)
+        
+        # Otherwise serve index.html for React routing
+        return send_from_directory(app.static_folder, 'index.html')
     
     # Run with SocketIO for real-time features
     socketio.run(

@@ -12,13 +12,18 @@ def get_products():
     """Get all products with filters"""
     try:
         db = get_db()
+        if not db:
+            return jsonify({'error': 'Database connection failed'}), 500
         
         # Build query from query params
         query = {'active': True, 'approved': True}
         
         # Brand filter
         if request.args.get('brandId'):
-            query['brandId'] = ObjectId(request.args.get('brandId'))
+            try:
+                query['brandId'] = ObjectId(request.args.get('brandId'))
+            except Exception as e:
+                return jsonify({'error': f'Invalid brandId: {str(e)}'}), 400
         
         # Category filter
         if request.args.get('category'):
@@ -32,31 +37,51 @@ def get_products():
         if request.args.get('minPrice') or request.args.get('maxPrice'):
             price_query = {}
             if request.args.get('minPrice'):
-                price_query['$gte'] = float(request.args.get('minPrice'))
+                try:
+                    price_query['$gte'] = float(request.args.get('minPrice'))
+                except ValueError:
+                    return jsonify({'error': 'Invalid minPrice'}), 400
             if request.args.get('maxPrice'):
-                price_query['$lte'] = float(request.args.get('maxPrice'))
+                try:
+                    price_query['$lte'] = float(request.args.get('maxPrice'))
+                except ValueError:
+                    return jsonify({'error': 'Invalid maxPrice'}), 400
             query['price'] = price_query
         
         # Pagination
-        page = int(request.args.get('page', 1))
-        limit = int(request.args.get('limit', 20))
+        try:
+            page = int(request.args.get('page', 1))
+            limit = int(request.args.get('limit', 20))
+        except ValueError:
+            return jsonify({'error': 'Invalid page or limit parameter'}), 400
+        
         skip = (page - 1) * limit
         
         # Get products
-        products = list(db.products.find(query).skip(skip).limit(limit))
-        total = db.products.count_documents(query)
+        try:
+            products = list(db.products.find(query).skip(skip).limit(limit))
+            total = db.products.count_documents(query)
+        except Exception as e:
+            return jsonify({'error': f'Database query failed: {str(e)}'}), 500
         
         # Enrich with brand info
         for product in products:
-            brand = db.brands.find_one({'_id': product['brandId']})
-            if brand:
-                product['brand'] = {
-                    '_id': str(brand['_id']),
-                    'name': brand['name'],
-                    'logoUrl': brand.get('logoUrl', '')
-                }
+            try:
+                brand = db.brands.find_one({'_id': product['brandId']})
+                if brand:
+                    product['brand'] = {
+                        '_id': str(brand['_id']),
+                        'name': brand['name'],
+                        'logoUrl': brand.get('logoUrl', '')
+                    }
+            except Exception as e:
+                print(f"Warning: Error enriching product {product.get('_id')} with brand info: {str(e)}")
         
-        products_serialized = [Product.serialize(p) for p in products]
+        # Serialize products
+        try:
+            products_serialized = [Product.serialize(p) for p in products]
+        except Exception as e:
+            return jsonify({'error': f'Serialization failed: {str(e)}'}), 500
         
         return jsonify({
             'products': products_serialized,
@@ -66,7 +91,10 @@ def get_products():
         }), 200
     
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        print(f"Products API error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
 
 @products_bp.route('/<product_id>', methods=['GET'])

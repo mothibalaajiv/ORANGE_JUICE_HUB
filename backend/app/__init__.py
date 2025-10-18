@@ -84,6 +84,25 @@ def create_app(config_name='default'):
     def health():
         return jsonify({'status': 'healthy', 'service': 'Tangy Town API'}), 200
     
+    # Serve React app for all non-API routes
+    @app.route('/', defaults={'path': ''})
+    @app.route('/<path:path>')
+    def serve_react_app(path):
+        """Serve React app for all non-API routes"""
+        from flask import send_from_directory
+        import os
+        
+        # If path is an API route, let it be handled by blueprints
+        if path.startswith('api/'):
+            return jsonify({'error': 'API endpoint not found'}), 404
+        
+        # If path exists as a static file, serve it
+        if path and os.path.exists(os.path.join(app.static_folder, path)):
+            return send_from_directory(app.static_folder, path)
+        
+        # Otherwise serve index.html for React routing
+        return send_from_directory(app.static_folder, 'index.html')
+    
     return app
 
 
@@ -117,7 +136,7 @@ def create_indexes():
         # Assignment logs collection indexes
         db.assignment_logs.create_index('orderId')
         
-        print("✓ MongoDB indexes created successfully")
+        print("MongoDB indexes created successfully")
     except Exception as e:
         print(f"Warning: Error creating indexes: {str(e)}")
 
