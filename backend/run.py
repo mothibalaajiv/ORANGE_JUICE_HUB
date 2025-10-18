@@ -2,6 +2,7 @@
 Tangy Town - Flask Backend Application
 Main entry point
 """
+from flask import send_from_directory
 from app import create_app, socketio
 import os
 
@@ -19,6 +20,16 @@ if __name__ == '__main__':
     print(f"API URL: http://localhost:{port}/api")
     print(f"Health Check: http://localhost:{port}/api/health")
     print("=" * 60)
+
+
+@app.route("/", defaults={"path": ""})
+@app.route("/<path:path>")
+def serve(path):
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, "index.html")
+    
     
     # Run with SocketIO for real-time features
     socketio.run(

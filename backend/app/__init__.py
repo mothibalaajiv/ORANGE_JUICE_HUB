@@ -16,7 +16,10 @@ db = None
 
 def create_app(config_name='default'):
     """Application factory pattern"""
-    app = Flask(__name__)
+    app = Flask(__name__,
+    static_folder=os.path.join(os.path.dirname(os.path.abspath(__file__)), "client_build"),
+    static_url_path="/")
+
     
     # Load configuration
     app.config.from_object(config[config_name])
